@@ -5,13 +5,14 @@ import yaml
 import os
 
 cfg = sys.argv[1]
-ola_name = os.environ.get('OLA_NAME')
 ola_hostname = os.environ.get('OLA_HOSTNAME')
 ola_port = int(os.environ.get('OLA_PORT'))
-nrpe_command = "check_nrpe_{}".format(ola_name)
 
 with open(sys.argv[1],'r') as cfg:
    data = yaml.load(cfg)
+
+ola_name = data['name']
+nrpe_command = "check_nrpe_{}".format(ola_name)
 
 with open(os.path.join("/etc/nagios3/conf.d","{}_commands.cfg".format(ola_name)),"w") as cfg:
    cfg.write("""

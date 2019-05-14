@@ -1,4 +1,5 @@
 ---
+name: swedenconnect
 services:
    - connector_prod:
       name: "eIDAS Connector (production)"
