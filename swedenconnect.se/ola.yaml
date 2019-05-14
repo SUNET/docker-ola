@@ -1,0 +1,33 @@
+---
+- services:
+   - connector_prod:
+      name: "eIDAS Connector (production)"
+      command: "/usr/lib/nagios/plugins/check-metadata.sh /etc/ssl/certs/swedenconnect-signer.crt https://connector.eidas.swedenconnect.se/idp/metadata/sp"
+      period: 247
+   - proxy_prod:
+      name: "eIDAS Proxy (production)"
+      command: "/usr/lib/nagios/plugins/check-metadata.sh /etc/ssl/certs/swedenconnect-signer.crt https://proxy.eidas.swedenconnect.se/eidas-ps/ServiceMetadata"
+      period: 247
+   - eidas_countries_qa
+      name: "eIDAS Countries (qa)"
+      command: "/usr/lib/nagios/plugins/check-eidastest-status.sh https://swedenconnect.se/testid/qa/execution-status"
+   - eidas_countries_prod
+      name: "eIDAS Countries (production)"
+      command: "/usr/lib/nagios/plugins/check-eidastest-status.sh https://swedenconnect.se/testid/prod/execution-status"
+      period: 247
+   - se_metadata_prod:
+      name: "SE Metadata"
+      command: "/usr/lib/nagios/plugins/check-metadata.sh /etc/ssl/certs/swedenconnect-signer.crt https://md.swedenconnect.se/role/idp.xml https://md.swedenconnect.se/role/sp.xml"
+    - eu_metadata_prod:
+      name: "EU Metadata"
+      command: "/usr/lib/nagios/plugins/check-metadata.sh /etc/ssl/certs/swedenconnect-signer.crt https://md.eidas.swedenconnect.se/role/idp.xml https://md.eidas.swedenconnect.se/role/sp.xml"
+    - eidas_mdsl_prod
+      name: "EU MDSL"
+      command: "/usr/lib/nagios/plugins/plugins/check-mdsl.sh /etc/ssl/certs/swedenconnect-signer.crt https://md.eidas.swedenconnect.se/mdservicelist-aggregate.xml https://md.eidas.swedenconnect.se/mdservicelist-se.xml"
+- servicegroups:
+   - eidas_prod:
+      name: "eIDAS"
+      members: ["connector_prod","proxy_prod"]
+   - swedenconnect_prod:
+      name: "swedenconnect.se (prod)"
+      servicegroup_members: ["eidas_prod","metadata_prod"]

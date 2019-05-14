@@ -1,0 +1,6 @@
+version: "3"
+services:
+   - swedenconnect.se:
+        image: docker.sunet.se/OLA/swedenconnect.se:latest
+        container_name:  swedenconnect.se
+        ports: 56661:5666

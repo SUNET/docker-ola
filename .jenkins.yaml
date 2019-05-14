@@ -1,0 +1,9 @@
+builders:
+  - script
+triggers:
+  cron: "@seekly"
+slack:
+  room: "devops-builds"
+clean_workspace: true
+script:
+  - "make"
