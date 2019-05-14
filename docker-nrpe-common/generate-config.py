@@ -8,31 +8,36 @@ cfg = sys.argv[1]
 ola_name = os.environ.get('OLA_NAME')
 ola_hostname = os.environ.get('OLA_HOSTNAME')
 ola_port = int(os.environ.get('OLA_PORT'))
-nrpe_command = "check_nrpe_{}".format(name)
+nrpe_command = "check_nrpe_{}".format(ola_name)
 
-data = yaml.load(file(sys.argv[1],'r'))
+with open(sys.argv[1],'r') as cfg:
+   data = yaml.load(cfg)
 
-with open(os.path.join("/etc/nrpe.d","{}_commands.cfg".format(name)),"w") as cfg:
-         cfg.print("""
-define command {
+with open(os.path.join("/etc/nagios3/conf.d","{}_commands.cfg".format(ola_name)),"w") as cfg:
+   cfg.write("""
+define command {{
    command_name {}
    command_line /usr/lib/nagios/plugins/check_nrpe -H '$HOSTADDRESS$' -p {}
-}
-""".format(nrpe_command, ola_port)
+}}
+""".format(nrpe_command, ola_port))
 
 if 'services' in data:
-   for service in data['services']:
-      cmd_name = (service.keys())[0]
-      cmd_info = service[cmd_name]
-      with open(os.path.join("/etc/nrpe.d","{}_services.cfg".format(name)),"w") as cfg:
-         cfg.print("""
-define service {
-   host_name  {}
+   with open(os.path.join("/etc/nagios3/conf.d","{}_services.cfg".format(ola_name)),"w") as cfg:
+      for service in data['services']:
+         cmd_name = list(service.keys())[0]
+         cmd_info = service[cmd_name]
+         cfg.write("""
+define service {{
+   host_name     {}
    check_command {}!{}
-   display_name  {}
-}
-""".format(ola_hostname, nrpe_command, cmd_name, cmd_info['name'))
-     with open(os.path.join("/etc/nrpe.d","{}_commands.cfg".format(name)),"w") as cfg:
-         cfg.print("""
-command[{}]={}
+   display_name  "{}"
+}}
+""".format(ola_hostname, nrpe_command, cmd_name, cmd_info['name']))
+
+   with open(os.path.join("/etc/nrpe.d","{}.cfg".format(ola_name)),"w") as cfg:
+      for service in data['services']:
+         cmd_name = list(service.keys())[0]
+         cmd_info = service[cmd_name]
+         cfg.write("""
+command[{}]="{}"
 """.format(cmd_name, cmd_info['command']))
