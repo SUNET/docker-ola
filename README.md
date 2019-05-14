@@ -13,7 +13,7 @@ FROM nrpe-common:latest
 ADD check-some-service.sh /usr/lib/nagios/plugins/
 ```
 
-Note that the container MUST define the name of the service as an environment variable `OLA_NAME`. In addition each container MUST supply a yaml file containing service and servicegroup definitions: `/etc/ola.yaml` with the following structure:
+Each container MUST supply a yaml file containing name, service and servicegroup definitions: `/etc/ola.yaml` with the following structure:
 
 ```
 name: the_awsome_collection_of_services
